@@ -35,3 +35,13 @@ for name in users:
     for n in range(len(users)):
         password = func.create_pass(8)
         func.create_file(name,name_file='password',password=password)
+        
+#-----------------------Удаление папок с user------------------------------#
+name = users[1][:len(users[0]) - 1]
+if os.path.isdir(name):
+    os.chdir(name)
+    files=os.listdir()
+    for file in files:   
+        os.remove(file)
+    os.chdir('../')
+    os.rmdir(name)
