@@ -6,6 +6,7 @@
 
 class Student:
     def __init__(self, name:str='', group:str='', gpa:int=0):
+        # id
         self.__name = name
         self.__group = group
         self.__gpa = gpa# 100
@@ -13,8 +14,19 @@ class Student:
     def show(self):
         print(self.__name,
         self.__group,
-        self.__gpa)
-
+        self.__gpa,end=' | ')
+    # тот же самый геттер, только лучше
+    @property # @property -декоратор (для методов и функций даете новые вомзонжости)
+    #геттер READ-ONLY
+    def getgroup(self):
+        return self.__group
+    
+    @property
+    def getgpa(self):
+        return self.__gpa
+    
+    
+    # для данной задачи не нужна
     def setGroup(self, group):
         if type(group) == type('str'):
             self.__group = group
@@ -23,14 +35,12 @@ class Student:
     # #геттер
     # def getGroup(self):
     #     return self.__group
-    # тоже самое, только лучше
+   
     #       # def group(self):
     #        #      return self.__group
     
-    @property # @property -декоратор (для методов и функций даете новые вомзонжости)
-    #геттер READ-ONLY
-    def group(self):
-        return self.__group
+    
+    
     
     #   #    # @property # @property -декоратор (для методов и функций даете новые вомзонжости)
     #    # #геттер READ-ONLY
