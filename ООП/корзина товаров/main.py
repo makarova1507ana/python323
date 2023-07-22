@@ -84,4 +84,5 @@ while True:
         shop_cart.append_product(product)
         
 shop_cart.show()
+print(shop_cart.cost_products)
 
