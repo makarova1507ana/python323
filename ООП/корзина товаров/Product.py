@@ -12,3 +12,7 @@ class Product:
         print(self.__name ,
         self.__type,
         self.__cost)
+    
+    @property
+    def cost(self):
+        return self.__cost
