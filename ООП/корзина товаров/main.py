@@ -86,3 +86,4 @@ while True:
 shop_cart.show()
 print(shop_cart.cost_products)
 
+sum(5,5)
