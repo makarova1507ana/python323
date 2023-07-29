@@ -31,7 +31,8 @@ class Point:
     def __str__(self): #перегрузка (новое действие) магический метод для str()
        # return '('+str(self.x) +', '+ str(self.y)+')' #обязательно должна быть строка
         return f'({str(self.x)}, {str(self.y)})'
-
+    def __sub__(self, n:int):
+        return Point(self.x-n, self.y-n)
 # # a = 5
 # # b = 5
 # # c = a==b
@@ -52,6 +53,8 @@ a = 5
 a = str(a)
 print(type(a))
 A = Point(2,2)
+A = A-2
+print(A.x,A.y)
 # A = str(A)
 # print(type(A),A, A[0], A[5] )
 A = str(A)
