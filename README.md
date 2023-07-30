@@ -1,4 +1,5 @@
 # python323
+последняя практика из урока 
 Занятия + Полезные материалы
 
 https://drive.google.com/drive/folders/1Rbm63bX51XO7VP5IcWTTJchoV5FcQMPe?usp=drive_link презентации
