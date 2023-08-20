@@ -1,5 +1,5 @@
 # python323
-последняя практика из урока <a href="https://github.com/makarova1507ana/python323/blob/main/%D0%9E%D0%9E%D0%9F/%D0%BF%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF%D1%8B%20%D0%BE%D0%BE%D0%BF/Inherit.py" >кликни на меня и попадешь на практику</a> 
+последняя практика из урока <a href="https://github.com/makarova1507ana/python323/blob/main/%D0%9E%D0%9E%D0%9F/lesson6.py" >кликни на меня и попадешь на практику</a> 
 <br>Занятия + Полезные материалы
 
 https://drive.google.com/drive/folders/1Rbm63bX51XO7VP5IcWTTJchoV5FcQMPe?usp=drive_link презентации
