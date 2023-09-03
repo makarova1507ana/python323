@@ -1,5 +1,5 @@
 # python323
-последняя практика из урока <a href="https://github.com/makarova1507ana/python323/blob/main/SQL/lesson1.sql" >кликни на меня и попадешь на практику</a> 
+последняя практика из урока <a href="https://github.com/makarova1507ana/python323/tree/main/SQL/%D0%A1%D0%92%D0%AF%D0%97%D0%98" >кликни на меня и попадешь на практику</a> 
 <br>Занятия + Полезные материалы
 
 https://drive.google.com/drive/folders/1Rbm63bX51XO7VP5IcWTTJchoV5FcQMPe?usp=drive_link презентации
