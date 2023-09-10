@@ -26,10 +26,10 @@ games = [{
 """
 for row in range(len(games)):
     games[row] = {"id": games[row][0], "player_score": games[row][1],"computer_score": games[row][2], "step": games[row][3], "id_player": games[row][4]}
-print(games)
+# print(games)
 with sqlite3.connect("knb.db") as con:
     cur = con.cursor()
-    cur.execute("DROP TABLE IF EXISTS GAMES")
+    cur.execute("DROP TABLE IF EXISTS result_games")
     cur.executescript("""
                 CREATE TABLE IF NOT EXISTS players(
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -69,9 +69,40 @@ with sqlite3.connect("knb.db") as con:
     # for game in games:
     #   cur.execute("INSERT INTO games VALUES (:id, :player_score, :computer_score, :step, :id_player)", {"id": game["id"], "player_score":game["player_score"], "computer_score":game["computer_score"], "step":game["step"], "id_player":game["id_player"]})
     
+    # result = cur.execute("""
+    #             SELECT * FROM games;
+    #             """) 
+    # for row in result.fetchall():
+    #     print(row)
+        
+        
+    """ 
+    (1, 0, 1, 1, 1)
+    (1, 0, 2, 2, 1)
+    (1, 0, 3, 3, 1)
+    ПЛАН
+    узнаем кто победил по player_score и computer_score(там где 3)
+    нашли там где 3 очка, узнаем в этой строке ход ичто за игрок
+    записываем в таблицу result
+    """
     result = cur.execute("""
                 SELECT * FROM games;
                 """) 
+    
     for row in result.fetchall():
-        print(row)
-    #print(result.fetchall()) # надо посмотреть
+        if row[1] == 3:
+            #узнаем имя игрока
+            name_player = cur.execute("SELECT pname FROM players, games WHERE games.id_player = players.id").fetchall()[0]
+            res = (row[3], name_player, row[4])
+            cur.execute("INSERT INTO result_games VALUES (NULL, ?,?,?)", res)
+        elif  row[2] == 3:
+            res = (row[3], "Computer", row[4])
+            cur.execute("INSERT INTO result_games VALUES (NULL, ?,?,?)", res)
+    
+    result = cur.execute("""
+                SELECT * FROM result_games;
+                """) 
+    print(result.fetchall())
+      
+        
+        
