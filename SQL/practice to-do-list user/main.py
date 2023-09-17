@@ -69,34 +69,35 @@ with sq.connect("to-do_list.db") as con:
 
     #---------------------имитация Авторизации пользователя---------------------------#
     username = "username257"
-    result = cur.execute(f"""
-                SELECT id,username FROM users WHERE username = \'{name_user}\'
+  
+    while result.rowcount != 0:
+        result = cur.execute(f"""
+                SELECT id,username FROM users WHERE username = \'{username}\'
                 """)
-    while len(result.fetchall()) != 0:
       #  "4. реализовать интерфейс по управлению задач"
-      comand = input("""
-                     1 - add task
-                     2 - update task 
-                     3 - delete task
-                     4 - exit 
-                     """) 
-      if comand ==  "1":
-        pass
-          # !!! НЕ РАБОТАЕТ !!! 
-        #   result = cur.execute(f"""
-        #         SELECT id,username FROM users WHERE username = \'{name_user}\'
-        #         """)
-        #   #task = add_task("task1",result.fetchall()[0][0])
-        #   result = cur.execute(f"""
-        #         SELECT id,username FROM users WHERE username = \'{name_user}\'
-        #         """)
+        comand = input("""
+                        1 - add task
+                        2 - update task 
+                        3 - delete task
+                        4 - exit 
+                        """) 
+        id_user = result.fetchall()[0][0]
+        if comand ==  "1":
+            task = add_task("task1",id_user)
+            cur.executescript(task)# !!! MUST BE SCRIPT 2
+        elif comand ==  "2":
+            r = cur.execute("SELECT * FROM tasks where id_user=?",(str(id_user)))# !!! MUST BE SCRIPT 
+            print(r.fetchall())
+        elif comand ==  "4":
+            break
     else:
         print("не удалось авторизоваться",)
         
         
     result = cur.execute("""
-                SELECT * FROM users;
+                SELECT * FROM tasks;
                 """) 
+    print(result.fetchall())
     # db -> SQL 
     with open("result.sql","w") as f:
         for sql_txt in con.iterdump():
