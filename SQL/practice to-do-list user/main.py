@@ -69,8 +69,7 @@ with sq.connect("to-do_list.db") as con:
 
 
     #---------------------имитация Авторизации пользователя---------------------------#
-    username = "username257"
-    
+    username = 'username257'
     result = cur.execute(f"""
                 SELECT id,username FROM users WHERE username = \'{username}\'
                 """)
@@ -78,9 +77,7 @@ with sq.connect("to-do_list.db") as con:
     # можно повторно попросить  ввести значение 
     # или зарегистрации
     while result.rowcount != 0:
-        result = cur.execute(f"""
-                SELECT id,username FROM users WHERE username = \'{username}\'
-                """)
+        
       #  "4. реализовать интерфейс по управлению задач"
         comand = input("""
                         1 - add task
@@ -88,14 +85,29 @@ with sq.connect("to-do_list.db") as con:
                         3 - delete task
                         4 - exit 
                         """) 
-        id_user = result.fetchall()[0][0]# обратились к кортежу и у него взяли 1 элемент
+        result = cur.execute(f"""
+                SELECT id,username FROM users WHERE username = \'{username}\'
+                """)
+        id_user = result.fetchone()[0]# взяли кортеж и у него берем 1 элемент
+        
         if comand ==  "1":
             # task можем попросить пользователя вводить 
             task = add_task("task1",id_user) # строка "INSERT ... "
             cur.executescript(task)# !!! MUST BE SCRIPT 2
-        elif comand ==  "2":
-            r = cur.execute("SELECT * FROM tasks where id_user=?",(str(id_user)))# !!! MUST BE SCRIPT 
-            print(r.fetchall())
+            
+        elif comand ==  "2": # редактирование задачи
+            r = cur.execute("SELECT id, task FROM tasks where id_user=?",(str(id_user)))
+            
+            for row in r.fetchall():
+                print(row)
+                
+            num = input("введите номер задачи ")
+            #  проверка на соответвствие введенному номер
+            result_rows = cur.executescript(f"SELECT id FROM tasks where id={num}")
+            if result_rows.fetchall():
+                new_task = input("введите задачу ") # новый текст задачи
+                cur.execute("UPDATE tasks SET task = ? WHERE id=?;",(new_task, num))
+            
         elif comand ==  "4":
             break
     else:
