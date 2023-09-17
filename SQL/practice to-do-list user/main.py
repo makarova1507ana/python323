@@ -44,7 +44,7 @@ with sq.connect("to-do_list.db") as con:
                 """) 
     # print(result.fetchall())
     
-    
+    #создание username до тех пока username не станет уникальным  
     while len(result.fetchall()) != 0:
         name_user = "username" + str(random.randint(1,1000)) # пользователь заносит данные например через input
         result = cur.execute(f"""
@@ -58,6 +58,7 @@ with sq.connect("to-do_list.db") as con:
 
     avatar = bin_file
     
+    # создание нового пользователя
     cur.execute("INSERT INTO users (username, password, avatar) VALUES (?,?,?)",(name_user, password, avatar)) 
     
     
@@ -69,7 +70,13 @@ with sq.connect("to-do_list.db") as con:
 
     #---------------------имитация Авторизации пользователя---------------------------#
     username = "username257"
-  
+    
+    result = cur.execute(f"""
+                SELECT id,username FROM users WHERE username = \'{username}\'
+                """)
+    
+    # можно повторно попросить  ввести значение 
+    # или зарегистрации
     while result.rowcount != 0:
         result = cur.execute(f"""
                 SELECT id,username FROM users WHERE username = \'{username}\'
@@ -81,9 +88,10 @@ with sq.connect("to-do_list.db") as con:
                         3 - delete task
                         4 - exit 
                         """) 
-        id_user = result.fetchall()[0][0]
+        id_user = result.fetchall()[0][0]# обратились к кортежу и у него взяли 1 элемент
         if comand ==  "1":
-            task = add_task("task1",id_user)
+            # task можем попросить пользователя вводить 
+            task = add_task("task1",id_user) # строка "INSERT ... "
             cur.executescript(task)# !!! MUST BE SCRIPT 2
         elif comand ==  "2":
             r = cur.execute("SELECT * FROM tasks where id_user=?",(str(id_user)))# !!! MUST BE SCRIPT 
