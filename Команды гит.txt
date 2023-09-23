@@ -16,14 +16,13 @@ cd .. в предыдущию папку
 mkdir name_folder
 
 создание файла
-
 echo "some text" > file_name.txt
 
 
 
-
-
-
+удаление
+rm file_name.txt
+rmdir namefolder
 
 
 
@@ -53,10 +52,10 @@ hard reset -откатить целую пачку комитов
 merge - сначала подтягиваем в свою ветку из master все иызменения
 merge - потом тестируем и делаем слияние переходим (checkout) в master и применяем (merge) все изменения из нашей ветки
 
-git commit -a -m 'commit all edited files' закомитить все измененные файлы безиспользования команды git add
+git commit -a -m 'commit all edited files' закомитить все измененные файлы безиспользования команды git add (Если статус у файла modified )
 git clone - скачивание репозитория 
 git status - просмотр текущих изменений 
-git add - добавить файл в локальный репозиторий 
+git add - добавить файл в индекс 
 git commit - коммит в локальный репозиторий 
 git push - коммит в удаленный репозиторий
 
