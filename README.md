@@ -1,5 +1,5 @@
 # python323
-последняя практика из урока <a href="https://github.com/makarova1507ana/python323/blob/main/SQL/agrigate_functions.sql" >кликни на меня и попадешь на практику</a> 
+последняя практика из урока <a href="https://github.com/makarova1507ana/python323/tree/main/work_with_git" >кликни на меня и попадешь на практику</a> 
 <br>Занятия + Полезные материалы
 
 https://drive.google.com/drive/folders/1Rbm63bX51XO7VP5IcWTTJchoV5FcQMPe?usp=drive_link презентации
