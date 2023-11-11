@@ -1,7 +1,22 @@
+
 {% extends 'base.html' %}
+{% load static %}
 
 {% block  content %}
-<main style="width:100%; height=600px ; background-color=light-yellow;">
-    CONTNET_about_movie
+
+<main>
+    <table class="disk_film">
+        <tr>
+            <td>
+                <img src="{% static 'films/images/movie_base.jpg' %}" alt="this is image of movie">
+            </td>
+            <td class="description">
+                <p>also called a movie, motion picture, moving picture, picture, photoplay or (slang) flick – is a work of visual art that simulates experiences and otherwise communicates ideas, stories, perceptions, feelings, beauty, or atmosphere through the use of moving images. These images are generally accompanied by sound and, more rarely, other sensory stimulations.[1] The word "cinema", short for cinematography, is often used to refer to filmmaking and the film industry, and the art form that is the result of it.</p>
+            </td>
+
+
+
+        </tr>
+    </table>
 </main>
 {% endblock %}
