@@ -1,19 +1,51 @@
 <!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+     <link rel="stylesheet" href="{% static 'films/CSS/style.css' %}">
+
 </head>
 <body>
 <header style="width:100%; height=200px ; background=light-blue;">
-    <ul class="nav-menu">
-        {% for element in menu %}
-            <li>{{element}}</li>
-        {% endfor %}
-    </ul>
+<nav class="one">
+
+  <ul>
+    <li><a href="#"><i class="fa fa-home fa-fw"></i>Kinopoisk 2.0</a></li>
+    <li><a href="http://127.0.0.1:8000/films/search_movie/">Movies</a></li>
+    <li><a href="#">Categories</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a href="#">About us</a></li>
+    <li>
+      <span class="d7">
+        <form method="POST" action="/films/search_movie/">
+          {% csrf_token %}
+          <input type="text" name="search_field" placeholder="Search">
+          <button type="submit"></button>
+        </form>
+      </span>
+
+    </li>
+
+      <span class="account">
+    <li><a href="#">Sing up</a></li>
+    <li><a href="#">Sing in</a></li>
+      </span>
+
+  </ul>
+</nav>
 </header>
+
+
+
 {% block  content %} {% endblock %}
-<footer style="width:100%; height=200px ;  background=light-blue;">
+
+
+<footer>
+
+
     FOOTER
 </footer>
 </body>

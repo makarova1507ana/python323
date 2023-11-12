@@ -1,3 +1,4 @@
+import requests
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 def g(word):
@@ -29,17 +30,38 @@ def f(request):
     return render(request, "edu/example.html", data)
 
 
+def search_movies(request):
+    name = request.POST.get("search_field", "Matrix")
+    req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={name}&page=1")
+    result = req.json()
+    # 1 проверить а есть ли найденные фильм
+    if result['Response'] == 'False':
+        return {'Error': result['Error']}
+
+    # 2 кол-во страниц соотнести с кол-во результатов
+    if int(result['totalResults']) / 10 < 3:
+        return {'response': result}
+    req2 = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={name}&page=2")
+    result['Search'] += req2.json()['Search']
+    req3 = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={name}&page=3")
+    result['Search'] += req3.json()['Search']
+    count_pages = int(result['totalResults'])
+    if count_pages % 3 != 0:
+        count_pages = count_pages // 3 + 1
+    else:
+        count_pages = count_pages // 3
+
+    return {'response': result,
+            'count_pages': range(1, count_pages+1)}
 # Create your views here.
 def index(request):# http://127.0.0.1:8000/films/
     return HttpResponse("Страница про фильмы")
 
 def movie_pages(request, name_page):# http://127.0.0.1:8000/films/{name_page}
-    data = {
-        'menu': ['menu1', 'menu2'],
-    }
+    data = search_movies(request)
     if name_page in ['info_movie', "search_movie"]:
         return render(request, f"films/{name_page}.html", data)
-    return Http404#("<h1>page not found</h1>")
+    return Http404("<h1>page not found</h1>")
 
 
 def categories(request, cat_name):# http://127.0.0.1:8000/films/movie/{id_movie}

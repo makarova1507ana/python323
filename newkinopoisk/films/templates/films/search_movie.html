@@ -1,5 +1,35 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block  content %}
-<main style="width:100%; height=600px ; background=light-yellow;">CONTNET</main>
+<main>
+        <h2 class="Main_Title">Movies</h2>
+        {% if Error %}
+            <p>Results: {{Error}}</p>
+        {% else %}
+            <p>Results: {{response.totalResults}}</p>
+        {% endif %}
+
+        {% for film in response.Search%}
+        <div class="movie" id="{{ film.imdbID }}">
+            {% if film.Poster == "N/A" %}
+                <img class="movie_img" src="{% static 'films/images/movie_base.jpg' %}" alt="this is image of movie">
+            {% else %}
+                <img class="movie_img" src="{{film.Poster}}" alt="this is image of movie">
+            {% endif %}
+            <span class="title_movie">{{film.Title}}</span>
+        </div>
+        {% endfor %}
+        <ul class="pagination">
+            <a href="#" class> <li><</li> </a>
+
+            {% for number_page in count_pages %}
+                <a href="#"> <li>{{ number_page }}</li> </a>
+            {% endfor %}
+
+            <a href="#"> <li><</li> </a>
+        </ul>
+
+
+</main>
 {% endblock %}

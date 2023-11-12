@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'films',#'films.apps.FilmsConfig'
+   # 'rest_framework'
 ]
 STATIC_URL = 'static/'
 
