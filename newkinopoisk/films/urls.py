@@ -3,7 +3,9 @@ import films.views as film  #from films.views import index, movie, categories
 
 urlpatterns = [
     path('', film.index),  # http://127.0.0.1:8000/films/
-    path('<slug:name_page>/', film.movie_pages), # http://127.0.0.1:8000/films/{name_page}
+    path('search_movie/page<int:page_number>/', film.search_movies),# http://127.0.0.1:8000/films/search_movie/page0
+
+    path('info_movie/<slug:id_movie>/', film.movie_pages), # http://127.0.0.1:8000/films/info_movie/
     path('categories/<slug:cat_name>/', film.categories), # http://127.0.0.1:8000/films/categories/{cat_name}/
 
     # http://127.0.0.1:8000/films/test/

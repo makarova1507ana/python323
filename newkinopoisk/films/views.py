@@ -1,6 +1,24 @@
 import requests
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
+
+# Create your views here.
+def index(request):# http://127.0.0.1:8000/films/
+    return HttpResponse("Страница про фильмы")
+
+def movie_pages(request, id_movie):# http://127.0.0.1:8000/films/info_movie/id={id_movie}
+    return render(request, f"films/info_movie.html")
+
+
+
+def categories(request, cat_name):# http://127.0.0.1:8000/films/movie/{id_movie}
+    return HttpResponse(f"Страница про {cat_name} категория ")
+
+def archive(request, year):
+    return HttpResponse(f"archive {year}")
+
+    # if int(year) < 2023: return HttpResponse(f"archive {year}")
+    # return Http404
 def g(word):
     return word*2
 
@@ -30,46 +48,40 @@ def f(request):
     return render(request, "edu/example.html", data)
 
 
-def search_movies(request):
-    name = request.POST.get("search_field", "Matrix")
-    req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={name}&page=1")
-    result = req.json()
-    # 1 проверить а есть ли найденные фильм
-    if result['Response'] == 'False':
-        return {'Error': result['Error']}
 
-    # 2 кол-во страниц соотнести с кол-во результатов
-    if int(result['totalResults']) / 10 < 3:
-        return {'response': result}
-    req2 = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={name}&page=2")
-    result['Search'] += req2.json()['Search']
-    req3 = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={name}&page=3")
-    result['Search'] += req3.json()['Search']
-    count_pages = int(result['totalResults'])
-    if count_pages % 3 != 0:
-        count_pages = count_pages // 3 + 1
+def get_pages(page_number):
+    if page_number == 1:
+        return (1, 2, 3) # (10, еще 10, еще 10)
+    elif page_number > 1:
+        return (page_number + 2, page_number + 3, page_number + 4)
     else:
-        count_pages = count_pages // 3
+        return (1,)
+
+
+def get_movies(request, page_number):
+    #if request.POST.get("search_field") != None: #request.POST.get("search_field") обратились к телу запроса POST и к атрибут "search_field"
+    name = request.POST.get("search_field", "Matrix")
+    pages = get_pages(page_number) #pages = (1, 2, 3) - номера страниц для апи
+    result = {'totalResults': 0, 'Search': []}
+    count_pages = 0
+    for i in range(len(pages)):
+        try:
+            req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={name}&page={pages[i]}")
+            result['Response'] = req.json()['Response']
+            # 1 проверить  есть ли найденные фильм
+            if result['Response'] == 'False':      #!посмотри на Search перед return!
+                return {'Error': result['Error']}
+            result['Search'] += req.json()['Search']
+            result['totalResults'] = req.json()['totalResults']
+            count_pages = int(result['totalResults']) // 30
+
+        except:
+            break
+
 
     return {'response': result,
-            'count_pages': range(1, count_pages+1)}
-# Create your views here.
-def index(request):# http://127.0.0.1:8000/films/
-    return HttpResponse("Страница про фильмы")
-
-def movie_pages(request, name_page):# http://127.0.0.1:8000/films/{name_page}
-    data = search_movies(request)
-    if name_page in ['info_movie', "search_movie"]:
-        return render(request, f"films/{name_page}.html", data)
-    return Http404("<h1>page not found</h1>")
-
-
-def categories(request, cat_name):# http://127.0.0.1:8000/films/movie/{id_movie}
-    return HttpResponse(f"Страница про {cat_name} категория ")
-
-def archive(request, year):
-    return HttpResponse(f"archive {year}")
-
-    # if int(year) < 2023: return HttpResponse(f"archive {year}")
-    # return Http404
+            'count_pages': list(range(1, count_pages+1))}
+def search_movies(request, page_number):
+    data = get_movies(request, page_number) # делает запрос к апи на получение списка фильмов
+    return render(request, f"films/search_movie.html", data)
 

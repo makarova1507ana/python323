@@ -14,13 +14,13 @@
 
   <ul>
     <li><a href="#"><i class="fa fa-home fa-fw"></i>Kinopoisk 2.0</a></li>
-    <li><a href="http://127.0.0.1:8000/films/search_movie/">Movies</a></li>
+    <li><a href="http://127.0.0.1:8000/films/search_movie/page1/">Movies</a></li>
     <li><a href="#">Categories</a></li>
     <li><a href="#">Contact</a></li>
     <li><a href="#">About us</a></li>
     <li>
       <span class="d7">
-        <form method="POST" action="/films/search_movie/">
+        <form method="POST" action="/films/search_movie/page1/">
           {% csrf_token %}
           <input type="text" name="search_field" placeholder="Search">
           <button type="submit"></button>
