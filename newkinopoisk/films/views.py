@@ -6,8 +6,14 @@ from django.shortcuts import render
 def index(request):# http://127.0.0.1:8000/films/
     return HttpResponse("Страница про фильмы")
 
+def get_info_movie(id_movie):
+    req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&i={id_movie}")
+    data = req.json() # очистить/изменить от пустых значений
+    return data
+
 def movie_pages(request, id_movie):# http://127.0.0.1:8000/films/info_movie/id={id_movie}
-    return render(request, f"films/info_movie.html")
+    data = get_info_movie(id_movie)  # делает запрос к апи на получение списка фильмо
+    return render(request, f"films/info_movie.html", data)
 
 
 
