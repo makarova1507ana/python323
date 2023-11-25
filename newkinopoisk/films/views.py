@@ -1,6 +1,16 @@
 import requests
 from django.http import HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from films.models import Genres
+
+
+# genres = Genres.objects.all()
+# print(genres) # в консоле перед запуском сервера отобразятся список моделей
+
+
+
+
+
 
 # Create your views here.
 def index(request):# http://127.0.0.1:8000/films/
@@ -17,8 +27,9 @@ def movie_pages(request, id_movie):# http://127.0.0.1:8000/films/info_movie/id={
 
 
 
-def categories(request, cat_name):# http://127.0.0.1:8000/films/movie/{id_movie}
-    return HttpResponse(f"Страница про {cat_name} категория ")
+def categories(request):# http://127.0.0.1:8000/films/cats/
+    genre = get_object_or_404(Genres, pk=1) # genre = row in Genres (slite3.db)
+    return HttpResponse(f"Страница про {genre.title}  ")
 
 def archive(request, year):
     return HttpResponse(f"archive {year}")
