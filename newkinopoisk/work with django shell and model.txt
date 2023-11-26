@@ -42,3 +42,14 @@ Genres.objects.filter(id=2).delete()
 # ------------------------------ sql  ---------------------- #
 from django.db import connection
 connection.queries - > список словарей с запросами sql
+
+
+# ------------------------------ ленивые запросы  ---------------------- #
+Genres.objects.all() # нет sql запросов
+Genres.objects.all()[0].title  #происходит запрос к БД
+
+
+
+> for g in Genres.objects.all():
+...     g.foto = '/films/static/films/images/movie_base.jpg'
+...

@@ -28,8 +28,14 @@ def movie_pages(request, id_movie):# http://127.0.0.1:8000/films/info_movie/id={
 
 
 def categories(request):# http://127.0.0.1:8000/films/cats/
-    genre = get_object_or_404(Genres, pk=1) # genre = row in Genres (slite3.db)
-    return HttpResponse(f"Страница про {genre.title}  ")
+    #genre = get_object_or_404(Genres, pk=1) # genre = row in Genres (slite3.db)
+    genres = Genres.objects.all()
+    fotos = []
+    # for genre in genres:
+    #     fotos.append(genre.foto)
+    data = {"genres": genres,
+    "fotos": fotos}
+    return render(request, f"films/categories.html", data)
 
 def archive(request, year):
     return HttpResponse(f"archive {year}")
