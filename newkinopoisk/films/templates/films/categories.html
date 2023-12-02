@@ -7,11 +7,11 @@
         {% for genre in genres %}
         <!--переименовать class -->
                 <div class="movie">
-                <!--доделать настройку пути -->
-<!--                        <img class="movie_img" src="{{foto}}" alt="this is image of cat">-->
-                        <span class="title_movie">{{genre}}</span>
+
+<img class="movie_img" src="{{ photo }}" alt="this is image of cat">
+                        <span class="title_movie">{{ genre }}</span>
                 </div>
         {% endfor %}
-
+        <a href="http://127.0.0.1:8000/suggestion/"><button>suggest genre</button></a>
 </main>
 {% endblock %}

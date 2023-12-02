@@ -14,7 +14,7 @@
 
     <!--блоки с фильмами-->
         {% for film in response.Search%}
-     <a href="http://127.0.0.1:8000/films/info_movie/{{ film.imdbID }}/">
+     <a href="http://127.0.0.1:8000/info_movie/{{ film.imdbID }}/">
         <div class="movie" id="{{ film.imdbID }}">
             {% if film.Poster == "N/A" %}
             <img class="movie_img" src="{% static 'films/images/movie_base.jpg' %}" alt="this is image of movie">
@@ -30,13 +30,13 @@
 
         <!--пагинация-->
         <ul class="pagination">
-            <a href="/films/search_movie/page1/" class> <li> < </li> </a>
+            <a href="/search_movie/page1/" class> <li> < </li> </a>
 
             {% for number_page in count_pages %}
-                <a href="/films/search_movie/page{{number_page}}/"> <li>{{ number_page }}</li> </a>
+                <a href="/search_movie/page{{number_page}}/"> <li>{{ number_page }}</li> </a>
             {% endfor %}
 
-            <a href="/films/search_movie/page{{count_pages|last}}/"> <li> > </li> </a>
+            <a href="/search_movie/page{{count_pages|last}}/"> <li> > </li> </a>
         </ul>
         {% endif %}
 

@@ -1,8 +1,8 @@
 import requests
 from django.http import HttpResponse, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from films.models import Genres
-
+from .forms import SuggestGenreForm
 
 # genres = Genres.objects.all()
 # print(genres) # в консоле перед запуском сервера отобразятся список моделей
@@ -14,7 +14,32 @@ from films.models import Genres
 
 # Create your views here.
 def index(request):# http://127.0.0.1:8000/films/
-    return HttpResponse("Страница про фильмы")
+    return render(request, f"films/index.html")
+
+
+# пример распаковки значений
+# def foo(x, y):
+#     print(x, y)
+#
+# d = {'x': 1, 'y': 2}
+# foo(**d)
+def suggest_genre(request):
+    if request.method == 'POST':
+        form = SuggestGenreForm(request.POST)
+        # print(request.POST)
+        if form.is_valid(): # проверку в бэкэнд
+            #print(form.cleaned_data) #очищенные данные
+            try:
+                Genres.objects.create(**form.cleaned_data)
+                return redirect("/cats/")
+            except:
+                form.add_error(None, "Ошибка добавления данных")
+    else:
+        form = SuggestGenreForm()
+
+    return render(request,
+                  f"films/suggestion.html",
+                  {'form': form})
 
 def get_info_movie(id_movie):
     req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&i={id_movie}")
@@ -34,7 +59,8 @@ def categories(request):# http://127.0.0.1:8000/films/cats/
     # for genre in genres:
     #     fotos.append(genre.foto)
     data = {"genres": genres,
-    "fotos": fotos}
+    "photo": str(genres[0].image)}
+
     return render(request, f"films/categories.html", data)
 
 def archive(request, year):

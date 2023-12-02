@@ -161,3 +161,84 @@ display: flex;
 .pagination a{
 margin-left: 5px;
 }
+
+
+
+.header1{
+color: #330031;
+letter-spacing: 0.5em;
+font-size: 2em;
+}
+.header2{
+letter-spacing: 0.25em;
+}
+.header2, .text_content{
+font-size: 1.5em;
+color: white;
+
+}
+.suggest{
+margin-top: 5%;
+margin-bottom: 5%;
+height: 100%;
+display: block;
+background-color:#330031;
+color: white;
+width: 400px;
+font-size: 1.5em;
+}
+.suggest label{
+margin: 5px;
+}
+.suggest-btn{
+height: 50px;
+}
+textarea {
+width: 100%;
+height: 100px;
+  resize: none;
+}
+.suggest input, .suggest textarea{
+margin: 7px;
+width: 93%;
+}
+
+
+.content_about_us tbody{
+margin-left: 5%;
+}
+
+.content_about_us
+{
+padding-left: 10%;
+margin-left: auto;
+margin-right: auto;
+width: 85%;
+height: 85%;
+padding: 10px;
+margin-bottom: 30px;
+
+
+ background-image: linear-gradient(to bottom right,#2649FF 20%,#F4CAC0 ,#FFF3B0 );
+ border-radius: 1%;
+ border-bottom-right-radius: 25%;
+}
+.content_about_us img{
+
+width: 100%;
+}
+.img_sofa{
+width: 50%;
+}
+.btn-start{
+margin-top: 10%;
+margin-left:50%;
+
+
+border-radius: 100px;
+font-size: 1.5em;
+width: 200px;
+height: 50px;
+background-color: #330031;
+color: #FFCCFD;
+}
