@@ -3,7 +3,7 @@ import films.views as film  #from films.views import index, movie, categories
 
 urlpatterns = [
     path('', film.index),  # http://127.0.0.1:8000
-    path('search_movie/page<int:page_number>/', film.search_movies),# http://127.0.0.1:8000/search_movie/page0
+    path('search_movie/', film.search_movies),# http://127.0.0.1:8000/search_movie/page0
     path('suggestion/', film.suggest_genre),  # http://127.0.0.1:8000/info_movie/id_movie/
 
 

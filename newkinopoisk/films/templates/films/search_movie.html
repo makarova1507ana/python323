@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block  content %}
-<main>
+<main xmlns="http://www.w3.org/1999/html">
         <h2 class="Main_Title">Movies</h2>
         <!--показ ошибки или общее число найденных фильмов-->
         {% if Error %}
@@ -29,15 +29,19 @@
 
 
         <!--пагинация-->
+     <form action="/search_movie/">
+         {% csrf_token %}
         <ul class="pagination">
-            <a href="/search_movie/page1/" class> <li> < </li> </a>
 
+<li style="display:none;"><input name="title" value="{{response.title}}"> </li>
             {% for number_page in count_pages %}
-                <a href="/search_movie/page{{number_page}}/"> <li>{{ number_page }}</li> </a>
+
+                 <li><input type="submit" name="page" value="{{number_page}}" > </li>
             {% endfor %}
 
-            <a href="/search_movie/page{{count_pages|last}}/"> <li> > </li> </a>
+
         </ul>
+     </form>
         {% endif %}
 
 </main>
