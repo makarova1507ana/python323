@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 
-from films.models import Genres
+from films.models import Genre
 
 
 #-----------------------------------работа со связкой с моделью -----------------
@@ -11,7 +11,7 @@ class SuggestGenreForm(forms.ModelForm):
         max_length=200,
         required=False, widget=forms.Textarea(attrs={'cols': '40', 'rows': '10'}))
     class Meta:
-        model = Genres
+        model = Genre
         fields = ['title', 'content', 'image']#'__all__'
         labels = {'title': 'Заголовок'}
         widgets = {'title': forms.TextInput(attrs={'class': 'form-text-area'})}
@@ -27,6 +27,13 @@ class SuggestGenreForm(forms.ModelForm):
         if image.size > 50 * 1024:  #image.size - в байтах.  50 KB в байтах
             raise ValidationError("Размер файла слишком большой. Максимальный размер: 50KB.")
         return image
+
+
+
+
+
+
+
 
 """
 #-----------------------------------работа без связки с моделью ---------------------------------

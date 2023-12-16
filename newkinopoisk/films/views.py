@@ -1,8 +1,8 @@
 import requests
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
-from films.models import Genres
-from django.core.paginator import Paginator
+from films.models import Genre, Movie
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import SuggestGenreForm
 from django.conf import settings  # Импорт настроек проекта
 
@@ -11,11 +11,10 @@ from django.conf import settings  # Импорт настроек проекта
 paginator = None
 
 
+def pageNotFound(request, exception):
+    return HttpResponseNotFound('<center><h1>Страница не найдена</h1></center>')
 
 
-
-
-# Create your views here.
 def index(request):# http://127.0.0.1:8000/films/
     return render(request, f"films/index.html")
 
@@ -49,8 +48,17 @@ def suggest_genre(request):
                   f"films/suggestion.html",
                   {'form': form})
 
-def pageNotFound(request, exception):
-    return HttpResponseNotFound('<center><h1>Страница не найдена</h1></center>')
+
+
+
+def categories(request):# http://127.0.0.1:8000/films/cats/
+    #genre = get_object_or_404(Genres, pk=1) # genre = row in Genres (slite3.db)
+    genres = Genre.objects.all()
+
+    data = {"genres": genres}
+
+    return render(request, f"films/categories.html", data)
+
 def get_info_movie(id_movie):
     req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&i={id_movie}")
     data = req.json() # очистить/изменить от пустых значений
@@ -59,110 +67,137 @@ def get_info_movie(id_movie):
 def movie_pages(request, id_movie):# http://127.0.0.1:8000/films/info_movie/id={id_movie}
     data = get_info_movie(id_movie)  # делает запрос к апи на получение списка фильмо
     return render(request, f"films/info_movie.html", data)
+def search_movies(request):
+    movies_list  = Movie.objects.all()
+    paginator = Paginator(movies_list, 10)  # Разбиваем на страницы по 10 элементов
 
+    page = request.GET.get('page')
+    try:
+        movies = paginator.page(page)
+    except PageNotAnInteger:
+        # Если страница не является целым числом, показываем первую страницу
+        movies = paginator.page(1)
+    except EmptyPage:
+        # Если страница выходит за пределы диапазона (например, 9999), показываем последнюю страницу
+        movies = paginator.page(paginator.num_pages)
 
-
-def categories(request):# http://127.0.0.1:8000/films/cats/
-    #genre = get_object_or_404(Genres, pk=1) # genre = row in Genres (slite3.db)
-    genres = Genres.objects.all()
-
-    data = {"genres": genres}
-
-    return render(request, f"films/categories.html", data)
+    data = {"movies": movies, "count": len(movies_list)}
+    return render(request, "films/search_movie.html", data)
 
 def archive(request, year):
     return HttpResponse(f"archive {year}")
 
     # if int(year) < 2023: return HttpResponse(f"archive {year}")
     # return Http404
-def g(word):
-    return word*2
-
-class A:
-    def __init__(self, a, b):
-        self.a = a
-        self.__b = b
-
-    def get_b(self):
-        return self.__b
 
 
-# http://127.0.0.1:8000/films/test/
-def f(request):
-    #блок обработки данных
-    data = {
-        'movies': [{'id': 1, 'title': 'Movie1', 'description': 'description1'}, {'id': 2, 'title': 'Movie2', 'description': 'description2'}, {'id': 3, 'title': 'Movie3', 'description': 'description3'}],
-        'title': 'учебная страница',
-        'menu': ['About', 'page1', g("page2")],
-        'num_float': 2.5,
-        'num_int': 5,
-        'set': {1, 5, 5, 5, 6},
-        'dict': {'1': 1, 2: 2},
-        'obj': A(5, 6),
-    }
-
-    return render(request, "edu/example.html", data)
-
-
-
-
-
-
-
-
-def get_pages(page_number, title):
-    page_number = int(page_number)
-    req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={title}")
-    totalResults = int(req.json()['totalResults'])
-    if page_number == 1:
-        return (1, 2, 3) # (10, еще 10, еще 10)
-    elif page_number > 1:
-        if totalResults//30 < page_number+2:
-            return (page_number-1, page_number, page_number + 1)
-        if totalResults//30 < page_number + 3 :
-            return (page_number, page_number+1 ,page_number + 2)
-        if  totalResults//30  <page_number +4:
-            return (page_number+1, page_number+2 ,page_number + 3)
-        return (page_number + 2, page_number + 3, page_number + 4)
-    else:
-        return (1,)
-
-
-def get_movies(request):
-    #if request.POST.get("search_field") != None: #request.POST.get("search_field") обратились к телу запроса POST и к атрибут "search_field"
-    if request.POST:
-
-        title = request.POST.get("search_film")
-        if title == None:
-            return {'Error': "No film"}
-    else:
-
-        title = request.GET.get("title")
-
-    pages = get_pages(request.GET.get("page",1), title) #pages = (1, 2, 3) - номера страниц для апи
-    result = {'totalResults': 0, 'Search': [], 'title': title}
-    count_pages = 0
-    for i in range(len(pages)):
+def transaction(request):
+    if request.method == 'POST':
+        # тестовые данные
         try:
-            req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={title}&page={pages[i]}")
-            result['Response'] = req.json()['Response']
-            # 1 проверить  есть ли найденные фильм
-            if result['Response'] == 'False':      #!посмотри на Search перед return!
-                return {'Error': result['Error']}
-            result['Search'] += req.json()['Search']
-            result['totalResults'] = req.json()['totalResults']
+            # получить данные о карте
+            # обращение к методу апи -> придет ответ
 
-
+            # ответ обработать(может придти ошибка транзкции (пример не хватает средств), или все успешно и т.д.)
+            # и принять решение
+                # и все хорошо (информация о транзакции успешная, и можно номер номер транзакции)
+                # сохраняем данные в модель (ваше описание модели оплаты (чек номер(id)))
+            pass
         except:
-            break
+            pass
+        pass
+        #
+    #return render(request, 'payment_form.html') #elseотображение странциы формой ввода карты
 
 
-    return {'response': result,
-            'count_pages': pages}
 
 
-def search_movies(request):
-    data = get_movies(request) # делает запрос к апи на получение списка фильмов
 
-    return render(request, f"films/search_movie.html", data)
+
+
+#-------------------------------------------------как было  и всякие примеры-----------------------------------------------------------------#
+#
+# def g(word):
+#     return word*2
+#
+# class A:
+#     def __init__(self, a, b):
+#         self.a = a
+#         self.__b = b
+#
+#     def get_b(self):
+#         return self.__b
+#
+#
+# # http://127.0.0.1:8000/films/test/
+# def f(request):
+#     #блок обработки данных
+#     data = {
+#         'movies': [{'id': 1, 'title': 'Movie1', 'description': 'description1'}, {'id': 2, 'title': 'Movie2', 'description': 'description2'}, {'id': 3, 'title': 'Movie3', 'description': 'description3'}],
+#         'title': 'учебная страница',
+#         'menu': ['About', 'page1', g("page2")],
+#         'num_float': 2.5,
+#         'num_int': 5,
+#         'set': {1, 5, 5, 5, 6},
+#         'dict': {'1': 1, 2: 2},
+#         'obj': A(5, 6),
+#     }
+#
+#     return render(request, "edu/example.html", data)
+
+# def get_pages(page_number, title):
+#     page_number = int(page_number)
+#     req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={title}")
+#     totalResults = int(req.json()['totalResults'])
+#     if page_number == 1:
+#         return (1, 2, 3) # (10, еще 10, еще 10)
+#     elif page_number > 1:
+#         if totalResults//30 < page_number+2:
+#             return (page_number-1, page_number, page_number + 1)
+#         if totalResults//30 < page_number + 3 :
+#             return (page_number, page_number+1 ,page_number + 2)
+#         if  totalResults//30  <page_number +4:
+#             return (page_number+1, page_number+2 ,page_number + 3)
+#         return (page_number + 2, page_number + 3, page_number + 4)
+#     else:
+#         return (1,)
+#
+#
+# def get_movies(request):
+#     #if request.POST.get("search_field") != None: #request.POST.get("search_field") обратились к телу запроса POST и к атрибут "search_field"
+#     if request.POST:
+#
+#         title = request.POST.get("search_film")
+#         if title == None:
+#             return {'Error': "No film"}
+#     else:
+#
+#         title = request.GET.get("title")
+#
+#     pages = get_pages(request.GET.get("page",1), title) #pages = (1, 2, 3) - номера страниц для апи
+#     result = {'totalResults': 0, 'Search': [], 'title': title}
+#     count_pages = 0
+#     for i in range(len(pages)):
+#         try:
+#             req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&s={title}&page={pages[i]}")
+#             result['Response'] = req.json()['Response']
+#             # 1 проверить  есть ли найденные фильм
+#             if result['Response'] == 'False':      #!посмотри на Search перед return!
+#                 return {'Error': result['Error']}
+#             result['Search'] += req.json()['Search']
+#             result['totalResults'] = req.json()['totalResults']
+#
+#
+#         except:
+#             break
+#
+#
+#     return {'response': result,
+#             'count_pages': pages}
+#
+#
+# def search_movies(request):
+#     data = get_movies(request) # делает запрос к апи на получение списка фильмов
+#
+#     return render(request, f"films/search_movie.html", data)
 
