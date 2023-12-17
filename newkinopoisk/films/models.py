@@ -6,6 +6,33 @@ import requests
 # когда создавать миграции и отправлять
 # когда создается новая таблица или меняется архитектура старой
 
+class Example(models.Model):
+    name = models.CharField(max_length=100, help_text="Введите название") # текст подсказка help_text
+    description = models.TextField(blank=True, null=True, help_text="Введите описание")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Дата создания записи")
+    updated_at = models.DateTimeField(auto_now=True, help_text="Дата последнего обновления записи")
+    is_active = models.BooleanField(default=True, help_text="Активный статус")
+    count = models.IntegerField(help_text="Количество чего-то")
+    price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Цена товара")
+    image = models.ImageField(upload_to='images/', help_text="Изображение товара")
+    file = models.FileField(upload_to='files/', help_text="Файл")
+
+    def __str__(self):
+        return self.name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # в формате статьи
 
 
@@ -44,12 +71,12 @@ class Movie(models.Model):
     #slug
 
     @classmethod #сохраняет сразу много фильмов (10 фильмов по апи)
-    def create_movies_from_api(cls, search_query):
+    def create_movies_from_api(cls, search_query): # search_query - параметр на поиск
         omdb_api_key = '23f82659'  # Замените на ваш API-ключ от OMDB
 
         params = {
             'apikey': omdb_api_key,
-            's': search_query,
+            's': search_query, #
         }
 
         response = requests.get('http://www.omdbapi.com/', params=params) #
@@ -109,12 +136,17 @@ class Movie(models.Model):
 
 # Subscription будет хранить информацию об уже приобретенных подписках
 class Subscription(models.Model):
+
     user = models.ForeignKey(User, on_delete=models.CASCADE) # джанго предоставляет User
     subscribed_date = models.DateField(auto_now_add=True)
-    #duration_days = models.IntegerField(default=30) #доделать кол-во дней на подписку
-    expiration_date = models.DateField(default=timezone.now() + timezone.timedelta(days=30))    #int(duration_days.value_to_string()))) # дата окончания подписки
+    duration_days = models.IntegerField(default=30) #доделать кол-во дней на подписку
+    expiration_date = models.DateField()    #int(duration_days.value_to_string()))) # дата окончания подписки
     cost_type = models.ForeignKey('SubscriptionType', on_delete=models.SET_NULL, null=True)
     # информация о покупке
+
+    @property
+    def expiration_date(self):
+        return self.subscribed_date + timezone.timedelta(days=self.duration_days)
 
     def __str__(self):
         return f"{self.user.username}'s Subscription"
@@ -136,13 +168,14 @@ class SubscriptionOption(models.Model):
 
 # SubscriptionType информация о возможных подписках, которые можно выбрать
 class SubscriptionType(models.Model):
-    class Status(models.IntegerChoices):
+    class Status(models.IntegerChoices): # Status для определению понятный графический интерфейс
         DISABLE = 0, 'Не активна'
         AVAILABLE = 1, 'активна'
     type_name = models.CharField(max_length=20, unique=True,  verbose_name="Название") # название
     cost_value = models.IntegerField(default=0, verbose_name="стоимость") #стоимость
     available_options = models.ManyToManyField(SubscriptionOption,  verbose_name="Доступные опции") # доступные по поиске опции
-    status = models.BooleanField(choices=Status.choices, default=Status.AVAILABLE, verbose_name="Статус")
+    status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.AVAILABLE, verbose_name="Статус")
+
     def __str__(self):
         return self.type_name
 

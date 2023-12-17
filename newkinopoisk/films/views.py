@@ -1,14 +1,20 @@
 import requests
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views import View
+from django.views.generic.base import TemplateView
+
 from films.models import Genre, Movie
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import SuggestGenreForm
 from django.conf import settings  # Импорт настроек проекта
 
+
 # genres = Genres.objects.all()
 # print(genres) # в консоле перед запуском сервера отобразятся список моделей
 paginator = None
+#CBV - classes-based view -> показать страницу
+# https://docs.djangoproject.com/en/4.2/ref/class-based-views/
 
 
 def pageNotFound(request, exception):
@@ -17,6 +23,11 @@ def pageNotFound(request, exception):
 
 def index(request):# http://127.0.0.1:8000/films/
     return render(request, f"films/index.html")
+
+class FilmsHome(TemplateView):
+    template_name = 'films/index.html'
+    extra_context = {"title": "Custom Title",
+                     "movies":  Movie.objects.all().select_related('cat')}
 
 def handle_uploaded_file(f):
     with open(f"uploads/{f.name}", "wb+") as destination:
@@ -48,7 +59,20 @@ def suggest_genre(request):
                   f"films/suggestion.html",
                   {'form': form})
 
-
+class SuggestGenre(View):
+    def get(self, request): # get -> method request
+        form = SuggestGenreForm()
+        return render(request,
+                  f"films/suggestion.html",
+                  {'form': form})
+    def post(self, request): # post -> method request
+        form = SuggestGenreForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save() #Genres.objects.create(**form.cleaned_data)
+            return redirect("/cats/")
+        return render(request,
+                      f"films/suggestion.html",
+                      {'form': form})
 
 
 def categories(request):# http://127.0.0.1:8000/films/cats/
