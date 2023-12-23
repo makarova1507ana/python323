@@ -242,3 +242,59 @@ height: 50px;
 background-color: #330031;
 color: #FFCCFD;
 }
+.subscriptions-container {
+  display: flex;
+  flex-wrap: wrap; /* Перенос блоков на следующую строку при нехватке места */
+  justify-content: space-between; /* Равномерное распределение между блоками */
+  gap: 5px; /* Расстояние между блоками */
+}
+.subscription-box {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  width: 300px;
+  margin: 15px;
+  display: inline-block;
+  min-height: 200px;
+  flex: 1;
+  position: relative;
+  overflow: hidden; /* Добавляем overflow: hidden для избежания перекрытия элементов */
+}
+
+.subscription-header,
+.subscription-buy {
+height: 25px;
+
+  color: white;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 8px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  text-align: center;
+}
+
+.subscription-header {
+  background-color: #330031;
+  top: 0;
+}
+
+.subscription-buy {
+  background-color: #330031;
+  bottom: 0;
+}
+.subscription-body {
+  padding: 10px;
+}
+.subscription-body p {
+  margin-bottom: 5px;
+}
+.subscription-body ul {
+  padding-left: 20px;
+  margin-top: 0;
+}
+.subscription-body ul li {
+  list-style-type: none;
+}

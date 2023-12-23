@@ -37,6 +37,29 @@
   </table>
 
 
+  <!-- Отображение информации о подписках -->
+    <h2>Подписки</h2>
+    <div class="subscriptions-container">
+        {% for subscription in subscriptions %}
+           <div class="subscription-box">
+                <div class="subscription-header">{{ subscription.type_name }}</div>
+
+               <div class="subscription-body">
+                    <p>Cost: {{ subscription.cost_value }}</p>
+                        <p>Available options:</p>
+                            <ul>
+                                {% for option in subscription.available_options.all %}
+                                <li>{{ option.name }}</li>
+                                 {% endfor %}
+                            </ul>
+                </div>
+
+               <div class="subscription-buy">Купить</div>
+
+           </div>
+
+       {% endfor %}
+    </div>
 </main>
 
 {% endblock %}

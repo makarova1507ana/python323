@@ -11,9 +11,10 @@
         <p>Results: {{ count }}</p>
 
         <!-- Блоки с фильмами -->
+
         {% for movie in movies %}
-    <a href="#">
-                <div class="movie" id="{{ movie.imdbID }}">
+    <a href="http://127.0.0.1:8000/info_movie/{{ movie.id }}/">
+                <div class="movie" id="{{ movie.id }}">
                         {% if movie.poster == None %}
                                 <img class="movie_img" src="{% static 'films/images/movie_base.jpg' %}" alt="this is image of cate">
                         {% else %}
