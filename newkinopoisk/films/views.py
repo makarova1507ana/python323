@@ -2,6 +2,7 @@ import requests
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.views.generic import DetailView, ListView, FormView
 from django.views.generic.base import TemplateView
 
 from films.models import Genre, Movie, Subscription, SubscriptionType
@@ -21,15 +22,12 @@ def pageNotFound(request, exception):
     return HttpResponseNotFound('<center><h1>Страница не найдена</h1></center>')
 
 
-def index(request):# http://127.0.0.1:8000/films/
-    return render(request, f"films/index.html")
 
 class FilmsHome(TemplateView):
 
-
     template_name = 'films/index.html'
     extra_context = {"title": "Custom Title",
-                     'subscriptions': SubscriptionType.objects.all()  }
+                     'subscriptions_type': SubscriptionType.objects.all()  }
 
 def handle_uploaded_file(f):
     with open(f"uploads/{f.name}", "wb+") as destination:
@@ -37,39 +35,16 @@ def handle_uploaded_file(f):
             destination.write(chunk)
 
 
-def suggest_genre(request):
-    if request.method == 'POST':
-        form = SuggestGenreForm(request.POST, request.FILES)
-        # print(request.POST)
-        if form.is_valid(): # проверку в бэкэнд
-            #print(form.cleaned_data) #очищенные данные
-            try:
-                # handle_uploaded_file(request.FILES["file"])# ошибка
-                form.save() #Genres.objects.create(**form.cleaned_data)
-                return redirect("/cats/")
-            except:
-                form.add_error(None, "Ошибка добавления данных")
-    else:
-        form = SuggestGenreForm()
 
-    return render(request,
-                  f"films/suggestion.html",
-                  {'form': form})
 
-class SuggestGenre(View):
-    def get(self, request): # get -> method request
-        form = SuggestGenreForm()
-        return render(request,
-                  f"films/suggestion.html",
-                  {'form': form})
-    def post(self, request): # post -> method request
-        form = SuggestGenreForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save() #Genres.objects.create(**form.cleaned_data)
-            return redirect("/cats/")
-        return render(request,
-                      f"films/suggestion.html",
-                      {'form': form})
+class SuggestGenre(FormView):
+    form_class = SuggestGenreForm
+    template_name = 'films/suggestion.html'
+    success_url = '/cats/'
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
 
 
 def categories(request):# http://127.0.0.1:8000/films/cats/
@@ -80,30 +55,45 @@ def categories(request):# http://127.0.0.1:8000/films/cats/
 
     return render(request, f"films/categories.html", data)
 
-def get_info_movie(id_movie):
-    req = requests.get(f"https://www.omdbapi.com/?apikey=23f82659&i={id_movie}")
-    data = req.json() # очистить/изменить от пустых значений
-    return data
+class MovieDetailView(DetailView):
+    template_name = "films/info_movie.html"
+    model = Movie
+    context_object_name = 'movie' # имя переменной для передачи конкретного фильма
 
-def movie_pages(request, id_movie):# http://127.0.0.1:8000/films/info_movie/id={id_movie}
-    data = get_info_movie(id_movie)  # делает запрос к апи на получение списка фильмо
-    return render(request, f"films/info_movie.html", data)
-def search_movies(request):
-    movies_list  = Movie.objects.all()
-    paginator = Paginator(movies_list, 10)  # Разбиваем на страницы по 10 элементов
+class MovieList(ListView):
+    template_name = "films/search_movie.html"
+    model = Movie
+    context_object_name = 'movies'
+    # метод, который будет формировать данные
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)# **kwargs - пустой
+        context["title"] = 'Matrix'
+        #context["year"] = 1999
+        return context
 
-    page = request.GET.get('page')
-    try:
-        movies = paginator.page(page)
-    except PageNotAnInteger:
-        # Если страница не является целым числом, показываем первую страницу
-        movies = paginator.page(1)
-    except EmptyPage:
-        # Если страница выходит за пределы диапазона (например, 9999), показываем последнюю страницу
-        movies = paginator.page(paginator.num_pages)
+    # Ошибка не отдает данные
+    #метод сортировки (по критерию)
+    # def get_queryset(self):
+    #     return Movie.objects.filter(title=self.kwargs['title']).select_related('title')
 
-    data = {"movies": movies, "count": len(movies_list)}
-    return render(request, "films/search_movie.html", data)
+
+
+# def search_movies(request):
+#     movies_list  = Movie.objects.all()
+#     paginator = Paginator(movies_list, 10)  # Разбиваем на страницы по 10 элементов
+#
+#     page = request.GET.get('page')
+#     try:
+#         movies = paginator.page(page)
+#     except PageNotAnInteger:
+#         # Если страница не является целым числом, показываем первую страницу
+#         movies = paginator.page(1)
+#     except EmptyPage:
+#         # Если страница выходит за пределы диапазона (например, 9999), показываем последнюю страницу
+#         movies = paginator.page(paginator.num_pages)
+#
+#     data = {"movies": movies, "count": len(movies_list)}
+#     return render(request, "films/search_movie.html", data)
 
 def archive(request, year):
     return HttpResponse(f"archive {year}")
