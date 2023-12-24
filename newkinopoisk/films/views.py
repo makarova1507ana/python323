@@ -6,14 +6,12 @@ from django.views.generic import DetailView, ListView, FormView
 from django.views.generic.base import TemplateView
 
 from films.models import Genre, Movie, Subscription, SubscriptionType
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from .forms import SuggestGenreForm
 from django.conf import settings  # Импорт настроек проекта
 
 
-# genres = Genres.objects.all()
-# print(genres) # в консоле перед запуском сервера отобразятся список моделей
-paginator = None
+
 #CBV - classes-based view -> показать страницу
 # https://docs.djangoproject.com/en/4.2/ref/class-based-views/
 
@@ -21,21 +19,11 @@ paginator = None
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<center><h1>Страница не найдена</h1></center>')
 
-
-
 class FilmsHome(TemplateView):
 
     template_name = 'films/index.html'
     extra_context = {"title": "Custom Title",
-                     'subscriptions_type': SubscriptionType.objects.all()  }
-
-def handle_uploaded_file(f):
-    with open(f"uploads/{f.name}", "wb+") as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-
-
-
+                     'subscriptions_type': SubscriptionType.objects.all()}
 
 class SuggestGenre(FormView):
     form_class = SuggestGenreForm
@@ -45,14 +33,9 @@ class SuggestGenre(FormView):
         form.save()
         return super().form_valid(form)
 
-
-
 def categories(request):# http://127.0.0.1:8000/films/cats/
-    #genre = get_object_or_404(Genres, pk=1) # genre = row in Genres (slite3.db)
     genres = Genre.objects.all()
-
     data = {"genres": genres}
-
     return render(request, f"films/categories.html", data)
 
 class MovieDetailView(DetailView):
@@ -64,36 +47,33 @@ class MovieList(ListView):
     template_name = "films/search_movie.html"
     model = Movie
     context_object_name = 'movies'
+    paginate_by = 10 # сколько будет на одной странице
+
     # метод, который будет формировать данные
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)# **kwargs - пустой
-        context["title"] = 'Matrix'
-        #context["year"] = 1999
+        context = super().get_context_data(**kwargs)
+        movies = context['movies']
+        context["title"] = self.request.GET.get('title', '')  # Передаем запрос в контекст для отображения в шаблоне
+       # context["count"] = len(movies)
+
+
         return context
 
-    # Ошибка не отдает данные
     #метод сортировки (по критерию)
-    # def get_queryset(self):
-    #     return Movie.objects.filter(title=self.kwargs['title']).select_related('title')
+    def get_queryset(self):
+        query_title = self.request.GET.get('title')  # Получаем параметр запроса из URL
+        query_year = self.request.GET.get('year')  # Получаем параметр запроса из URL
+        if query_title:
+            movies = Movie.objects.filter(title__icontains=query_title)  # Фильтруем фильмы по названию (независимо от регистра)
+        else:
+            movies = Movie.objects.all()# Если нет запроса, показываем все фильмы
+
+        #фильтр по году
+        if query_year:
+            movies = movies.filter(year=query_year)
+        return movies
 
 
-
-# def search_movies(request):
-#     movies_list  = Movie.objects.all()
-#     paginator = Paginator(movies_list, 10)  # Разбиваем на страницы по 10 элементов
-#
-#     page = request.GET.get('page')
-#     try:
-#         movies = paginator.page(page)
-#     except PageNotAnInteger:
-#         # Если страница не является целым числом, показываем первую страницу
-#         movies = paginator.page(1)
-#     except EmptyPage:
-#         # Если страница выходит за пределы диапазона (например, 9999), показываем последнюю страницу
-#         movies = paginator.page(paginator.num_pages)
-#
-#     data = {"movies": movies, "count": len(movies_list)}
-#     return render(request, "films/search_movie.html", data)
 
 def archive(request, year):
     return HttpResponse(f"archive {year}")

@@ -20,9 +20,9 @@
     <li><a href="#">About us</a></li>
     <li>
       <span class="d7">
-        <form method="POST" action="/search_movie/">
+        <form method="GET" action="/search_movie/">
           {% csrf_token %}
-          <input type="text" name="search_film" value="example" placeholder="Search">
+          <input type="text" name="title" value="" placeholder="Search">
           <button type="submit"></button>
         </form>
       </span>
@@ -31,7 +31,7 @@
 
       <span class="account">
     <li><a href="#">Sing up</a></li>
-    <li><a href="#">Sing in</a></li>
+    <li><a href="http://127.0.0.1:8000/user/login/">Sing in</a></li>
       </span>
 
   </ul>

@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'films',#'films.apps.FilmsConfig'
-   # 'rest_framework'
+    'films',
+    'users.apps.UsersConfig',
 ]
 STATIC_URL = 'static/'
 
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'newkinopoisk.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates/',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

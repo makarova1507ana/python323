@@ -4,12 +4,18 @@
 {% block content %}
 <main>
     <h2 class="Main_Title">Movies</h2>
-    <!-- Показ ошибки или общего числа найденных фильмов -->
-    {% if Error %}
-        <p>Results: {{ Error }}</p>
-    {% else %}
-        <p>Results: {{ count }}</p>
+    <!-- Немного фильтрации по году -->
+    <form method="GET" action="/search_movie/">
+        <input type="text" name="title" value="{{ title }}">
+        <input type="number" id="year" name="year" min="1900" max="2023" value="2023" onchange="updateSlider(this.value)">
+        <input type="submit" value="подтвердить">
+    </form>
+<br>
 
+        <!-- Показ ошибки или общего числа найденных фильмов -->
+    {% if count %}
+        <p>Results: {{ count }}</p>
+    {% endif %}
         <!-- Блоки с фильмами -->
 
         {% for movie in movies %}
@@ -26,14 +32,17 @@
         {% endfor %}
 
         <!-- Пагинация -->
+    {% if page_obj.has_other_pages %} <!--page_obj - текущая страница-->
         <form action="/search_movie/">
             {% csrf_token %}
             <ul class="pagination">
-                {% for number_page in movies.paginator.page_range %}
+                {% for number_page in paginator.page_range %}
                     <li><input type="submit" name="page" value="{{ number_page }}" ></li>
                 {% endfor %}
             </ul>
         </form>
     {% endif %}
+
 </main>
+
 {% endblock %}
