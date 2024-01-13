@@ -36,7 +36,7 @@
 
   </table>
 
-
+   {% if user.is_authenticated %} <!--Авторизован пользователь?-->
   <!-- Отображение информации о подписках -->
     <h2>Подписки</h2>
     <div class="subscriptions-container">
@@ -60,6 +60,7 @@
 
        {% endfor %}
     </div>
+    {% endif %}
 </main>
 
 {% endblock %}

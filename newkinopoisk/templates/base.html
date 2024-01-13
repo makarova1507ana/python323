@@ -29,10 +29,19 @@
 
     </li>
 
-      <span class="account">
-    <li><a href="#">Sing up</a></li>
-    <li><a href="http://127.0.0.1:8000/user/login/">Sing in</a></li>
-      </span>
+
+
+     <span class="account">
+        {% if user.is_authenticated %} <!--Авторизован пользователь?-->
+            <li class="last"> {{user.username}} | <a href="http://127.0.0.1:8000/user/logout/">Выйти</a></li>
+        {% else %}<!-- не авторизован-->
+            <li class="last"><a href="http://127.0.0.1:8000/user/login/">Войти</a> | <a href="#">Регистрация</a></li>
+        {% endif %}
+     </span>
+
+
+
+
 
   </ul>
 </nav>
