@@ -33,9 +33,9 @@
 
      <span class="account">
         {% if user.is_authenticated %} <!--Авторизован пользователь?-->
-            <li class="last"> {{user.username}} | <a href="http://127.0.0.1:8000/user/logout/">Выйти</a></li>
+            <li class="last"> {{user.username}} | <a href="http://127.0.0.1:8000/users/logout/">Выйти</a></li>
         {% else %}<!-- не авторизован-->
-            <li class="last"><a href="http://127.0.0.1:8000/user/login/">Войти</a> | <a href="#">Регистрация</a></li>
+            <li class="last"><a href="http://127.0.0.1:8000/users/login/">Войти</a> | <a href="http://127.0.0.1:8000/users/register/">Регистрация</a></li>
         {% endif %}
      </span>
 

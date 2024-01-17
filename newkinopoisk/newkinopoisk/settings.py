@@ -55,12 +55,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'newkinopoisk.urls'
 
 
-# LOGIN_REDIRECT_URL – задает URL-адрес, на который следует перенаправлять пользователя после успешной авторизации;
-# LOGIN_URL – определяет URL-адрес, на который следует перенаправить неавторизованного пользователя при попытке посетить закрытую страницу сайта;
-# LOGOUT_REDIRECT_URL – задает URL-адрес, на который перенаправляется пользователь после выхода.
 
-
-LOGIN_REDIRECT_URL = 'home'
 
 TEMPLATES = [
     {
@@ -142,3 +137,31 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.authentication.EmailAuthBackend',
+]
+# LOGIN_REDIRECT_URL – задает URL-адрес, на который следует перенаправлять пользователя после успешной авторизации;
+# LOGIN_URL – определяет URL-адрес, на который следует перенаправить неавторизованного пользователя при попытке посетить закрытую страницу сайта;
+# LOGOUT_REDIRECT_URL – задает URL-адрес, на который перенаправляется пользователь после выхода.
+
+
+LOGIN_REDIRECT_URL = '/users/account'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/'
+#EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# AUTH_USER_MODEL = 'users.User'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com" #"smtp.yandex.ru"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "testerikotesteriko@gmail.com" #"djangocourse@yandex.ru"
+EMAIL_HOST_PASSWORD = "yuye baap ulky gsia"   #пароль приложений #"bnufhkwcripaunvu"
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
