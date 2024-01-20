@@ -148,12 +148,16 @@ AUTHENTICATION_BACKENDS = [
 # LOGOUT_REDIRECT_URL – задает URL-адрес, на который перенаправляется пользователь после выхода.
 
 
+# для оплаты
+STRIPE_PUBLIC_KEY = 'pk_test_51OaOyQJGigxeIreC1drsmYedIC0L4obCQtoxnsVqU2Lgp9qbpz4GFOT9vAN2ikKgQrKzyBSMR068IGKH9Nj1qOIb00B3osEvfe'
+STRIPE_SECRET_KEY = 'sk_test_51OaOyQJGigxeIreCIbNjLgXbqzTouEmcebwkFYDWCFfN0jegb1zFZ1kflNwIrMr4DESAqYR3OjdxHTLZCPqpHloG00vLx0LXL4'
+
 LOGIN_REDIRECT_URL = '/users/account'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/'
 #EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = "smtp.gmail.com" #"smtp.yandex.ru"

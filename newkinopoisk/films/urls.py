@@ -1,5 +1,7 @@
 from django.urls import path, re_path
+
 import films.views as film  #from films.views import index, movie, categories
+
 urlpatterns = [
 
     path('', film.FilmsHome.as_view()),#extra_context={"title": "Custom Title"})),
@@ -10,6 +12,11 @@ urlpatterns = [
 
     path('cats/', film.categories, name="media"), # http://127.0.0.1:8000/cats/
 
+
+#новое
+    path('buy_subscription/', film.BuySubscription.as_view()),
+    path('payment/', film.PaymentView.as_view(), name='payment'),
+    path('payment/success/', film.PaymentSuccessView.as_view(), name='payment_success'),
 
     re_path(r"^archive/(?P<year>(1|2)\d{3})/$", film.archive),
 

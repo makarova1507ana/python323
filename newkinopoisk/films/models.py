@@ -3,8 +3,25 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 import requests
+
+from users.models import User
+from newkinopoisk import settings
+
+
 # когда создавать миграции и отправлять
 # когда создается новая таблица или меняется архитектура старой
+
+
+
+from django.db import models
+
+class Payment(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_intent_id = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
 
 class Example(models.Model):
     name = models.CharField(max_length=100, help_text="Введите название") # текст подсказка help_text
@@ -137,7 +154,7 @@ class Movie(models.Model):
 # Subscription будет хранить информацию об уже приобретенных подписках
 class Subscription(models.Model):
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE) # джанго предоставляет User
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     subscribed_date = models.DateField(auto_now_add=True)
     duration_days = models.IntegerField(default=30) #доделать кол-во дней на подписку
     expiration_date = models.DateField()    #int(duration_days.value_to_string()))) # дата окончания подписки

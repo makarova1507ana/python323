@@ -26,6 +26,5 @@ urlpatterns = [
 ]
 admin.site.site_header = "Администрирование kinopoisk 2.0"
 
-#admin.site.index_title = "TITLE"
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Оплата заказа</title>
+        <!-- Подключение библиотеки Stripe.js -->
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #3f3f3f;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        #card-element {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #6a44a8;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #54357e;
+        }
+
+        #card-errors {
+            color: #ff0000;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Форма для ввода данных карты -->
+<form id="payment-form" method="post">
+    {% csrf_token %}
+    <div>
+        <!-- Метка для поля ввода карты -->
+        <label for="card-element" style="color: #6a44a8;">
+            Карта
+        </label>
+        <!-- Элемент для ввода карты будет вставлен сюда -->
+        <div id="card-element"></div>
+        <!-- Место для вывода ошибок -->
+        <div id="card-errors" role="alert"></div>
+    </div>
+
+    <!-- Кнопка для отправки формы -->
+    <input type="submit" value="Оплатить">
+
+</form>
+
+<script>
+   // Инициализация Stripe
+  var stripe = Stripe('{{ publishable_key }}');
+  var elements = stripe.elements();
+
+  // Создание элемента для ввода карты
+  var cardElement = elements.create('card');
+  cardElement.mount('#card-element');
+
+  // Получение формы
+  var form = document.getElementById('payment-form');
+
+  // Обработка события отправки формы
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Создание токена карты через Stripe.js
+    stripe.createToken(cardElement).then(function(result) {
+      if (result.error) {
+        // Вывод ошибки, если она возникла
+        var errorElement = document.getElementById('card-errors');
+        errorElement.textContent = result.error.message;
+      } else {
+        // Создание скрытого поля для хранения токена и отправка формы
+        var tokenInput = document.createElement('input');
+        tokenInput.setAttribute('type', 'hidden');
+        tokenInput.setAttribute('name', 'stripeToken');
+        tokenInput.setAttribute('value', result.token.id);
+        form.appendChild(tokenInput);
+
+        // Отправка формы на сервер
+        form.submit();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

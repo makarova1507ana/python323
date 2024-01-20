@@ -1,4 +1,5 @@
 import requests
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, Http404, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
@@ -73,7 +74,9 @@ class MovieList(ListView):
             movies = movies.filter(year=query_year)
         return movies
 
-
+class BuySubscription(TemplateView, LoginRequiredMixin):
+    template_name = 'films/buy_subscription.html'
+    extra_context = {'subscriptions_type': SubscriptionType.objects.all()}
 
 def archive(request, year):
     return HttpResponse(f"archive {year}")
@@ -82,24 +85,62 @@ def archive(request, year):
     # return Http404
 
 
-def transaction(request):
-    if request.method == 'POST':
-        # тестовые данные
+# ------------------------------------- обработка платежа ---------------------------------------#
+# views.py
+from django.shortcuts import render
+from django.views import View
+from django.conf import settings
+from django.http import JsonResponse
+
+import stripe # надо устанавливать
+# Устанавливаем секретный ключ Stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+class PaymentView(View):
+    template_name = 'films/payment_form.html'
+
+    def get(self, request, *args, **kwargs):
+        # Обработка GET-запроса, отображение формы оплаты
+        print("оплата ...")
+        return render(request, self.template_name, {'publishable_key': settings.STRIPE_PUBLIC_KEY})
+
+    def post(self, request, *args, **kwargs):
+        # Получите данные о транзакции из формы
+        token = request.POST.get('stripeToken')
+        amount = 1000  # сумма в центах (например, $10.00)
+
         try:
-            # получить данные о карте
-            # обращение к методу апи -> придет ответ
+            # Создайте платежную транзакцию через Stripe API
+            charge = stripe.Charge.create(
+                amount=amount,
+                currency='usd',
+                source=token,
+                description='Оплата заказа в вашем магазине',
+            )
+            print("оплата прошла")
+            # Здесь может быть логика обработки успешного платежа
+            return redirect('payment_success')  # Перенаправление на страницу успешной оплаты
+        # return JsonResponse({'message': 'Платеж успешно проведен!'})
 
-            # ответ обработать(может придти ошибка транзкции (пример не хватает средств), или все успешно и т.д.)
-            # и принять решение
-                # и все хорошо (информация о транзакции успешная, и можно номер номер транзакции)
-                # сохраняем данные в модель (ваше описание модели оплаты (чек номер(id)))
-            pass
-        except:
-            pass
-        pass
-        #
-    #return render(request, 'payment_form.html') #elseотображение странциы формой ввода карты
+        except stripe.error.CardError as e:
+            # Ошибка с картой
+            print("Ошибка с картой")
+            return JsonResponse({'error': str(e)})
+
+        except stripe.error.StripeError as e:
+            # Остальные ошибки Stripe
+            print("Остальные ошибки")
+            return JsonResponse({'error': str(e)})
 
 
+# views.py
+from django.shortcuts import render
+from django.views import View
+from django.http import JsonResponse
 
+class PaymentSuccessView(View):
+    template_name = 'films/payment_success.html'
 
+    def get(self, request, *args, **kwargs):
+        # Отображение страницы успешной оплаты
+        return render(request, self.template_name)

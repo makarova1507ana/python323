@@ -1,0 +1,31 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block  content %}
+<main>
+<!-- Отображение информации о подписках -->
+    <h2>Подписки</h2>
+    <div class="subscriptions-container">
+        {% for subscription in subscriptions_type %}
+           <div class="subscription-box">
+                <div class="subscription-header">{{ subscription.type_name }}</div>
+
+               <div class="subscription-body">
+                    <p>Cost: {{ subscription.cost_value }}</p>
+                        <p>Available options:</p>
+                            <ul>
+                                {% for option in subscription.available_options.all %}
+                                <li>{{ option.name }}</li>
+                                 {% endfor %}
+                            </ul>
+                </div>
+
+               <a href="http://127.0.0.1:8000/payment/"><div class="subscription-buy">Купить</div></a>
+
+           </div>
+
+       {% endfor %}
+    </div>
+</main>
+{% endblock%}
